@@ -5,24 +5,48 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class DBHelper extends SQLiteOpenHelper{
     private static String DB_PATH = "/data/data/com.example.siow.mrmta/databases";
+    public static String DATABASE_FILE = "FoodTable.sql";
     private static String DB_NAME = "FoodTable";
     private SQLiteDatabase myDataBase;
-    private final Context myContext;
+    private static Context myContext;
 
     public DBHelper(Context context){
-        super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null, 2);
         this.myContext = context;
     }
 
-    public void createDatabase() throws IOException{
+    public static void createDB(SQLiteDatabase db) {
+        InputStream assetsDB = null;
+
+        try {
+            assetsDB = myContext.getAssets().open(DATABASE_FILE);
+            BufferedReader e = new BufferedReader(new InputStreamReader(assetsDB));
+            String s = null;
+
+            while((s = e.readLine()) != null) {
+                db.execSQL(s);
+            }
+
+            Log.i("DBHelper", "Database created");
+        } catch (IOException var5) {
+            Log.e("DBHelper", "Could not create new database...");
+            var5.printStackTrace();
+        }
+
+    }
+
+/*    public void createDatabase() throws IOException{
         boolean dbExist = checkDataBase();
         if(dbExist){
         }
@@ -34,9 +58,9 @@ public class DBHelper extends SQLiteOpenHelper{
                 throw new Error ("Error occur while copying database.");
             }
         }
-    }
+    }*/
 
-    private boolean checkDataBase() {
+/*    private boolean checkDataBase() {
         SQLiteDatabase checkDB = null;
         try {
             String myPath = DB_PATH + DB_NAME;
@@ -83,21 +107,25 @@ public class DBHelper extends SQLiteOpenHelper{
             myDataBase.close();
 
         super.close();
-    }
+    }*/
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        Log.d("alex","onCreate");
+        myDataBase = db;
+        createDB(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        Log.d("alex","onCreate");
+        createDB(db);
     }
 
     public Cursor getFood(String Name){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT Name, Type, Course FROM Food WHERE Name = "+ "'"+ Name + "'", null);
+        //Cursor c = db.rawQuery("SELECT Name, Type, Course FROM Food WHERE Name = "+ "'"+ Name + "'", null);
+        Cursor c = db.rawQuery("SELECT * FROM Food", null);
         return c;
     }
 }

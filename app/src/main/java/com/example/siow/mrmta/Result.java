@@ -40,18 +40,22 @@ public class Result extends AppCompatActivity{
             //Toast.makeText(this,searchText2,Toast.LENGTH_SHORT).show();
             listView = (ListView)findViewById(R.id.listView);
 
-            mydb = new DBHelper(this);
+/*            mydb = new DBHelper(this);
             try {
                 mydb.createDatabase();
+                Log.e("aaaa","aaa");
             } catch (IOException ioe) {
+                Log.e("aaaa","aaa");
                 throw new Error("Unable to create database");
             }
             try {
                 mydb.openDataBase();
             }catch(SQLiteException sqle){
                 throw sqle;
-            }
-            showResult();
+            }*/
+            DBAdapter dbAdapter = new DBAdapter(this);
+            dbAdapter.getFood("");
+            //showResult();
     }
 
     private void showResult(){
