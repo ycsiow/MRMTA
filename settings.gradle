@@ -1,0 +1,1 @@
+include ':app', ':openCVLibrary310', ':tess-two'
